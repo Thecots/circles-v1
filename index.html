@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>canvas</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    canvas{
+        background: royalblue;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+</style>
+<body>
+    <!-- AND REMEMBER THE GREFG NEVER SURRENDER -->
+    <div class="menu">
+        
+    </div>
+    <canvas></canvas>
+
+    <script>
+        const canvas = document.querySelector('canvas');
+        const c = canvas.getContext('2d');
+
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+
+        window.addEventListener('resize', () =>{
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+            init();
+        });
+
+        var mouse = {
+            x: undefined,
+            y: undefined
+        }
+
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.x;
+            mouse.y = event.y;
+        });
+
+        var maxRadius = 20;
+        var mouseRange = 35;
+
+        var colorArray = [
+            '#19243a',
+            '#f8d1b4',
+            '#f8bdad',
+            '#f68b83',
+            '#f54e48',
+        ]
+
+        function circle(x,y,xs,ys,r){
+            let color = colorArray[Math.round(Math.random() * colorArray.length)];
+            let minRadius = r;
+            this.update = () =>{
+                if(x + r > innerWidth || x - r < 0){
+                    xs = -xs;
+                }
+                if(y + r > innerHeight || y - r < 0){
+                    ys = -ys;
+                }
+           
+                if(mouse.x - x < mouseRange && mouse.x - x > -mouseRange && mouse.y - y < mouseRange && mouse.y - y > -mouseRange){
+                    if(r < maxRadius){
+                        r +=1;
+                    }
+                }else if(r > minRadius){
+                    r -= 1;
+                }
+
+                x += xs, y += ys;
+                c.beginPath();
+                c.arc(x,y,r,0,Math.PI * 2, false);
+                c.fillStyle = color;
+                c.fill();
+            }
+        }
+
+        var circleArray = [];
+        function init(){
+            circleArray = [];
+            for (let i = 0; i < 1500; i++) {
+                let s = 0.5;
+                let xs = (Math.random() -0.5) * s;
+                let ys = (Math.random() -0.5) * s;
+                let r = Math.random() * 3 + 1;
+                let x = Math.random() * (innerWidth -r *2)+r;
+                let y = Math.random() * (innerHeight -r *2)+r;
+                circleArray.push(new circle(x,y,xs,ys,r))
+            }
+        }
+
+        function animate(){
+            requestAnimationFrame(animate);
+            c.clearRect(0,0,innerWidth,innerHeight);
+
+            for (let i = 0; i < circleArray.length; i++) {
+                circleArray[i].update();
+            }
+        }
+
+        init();
+        animate();
+
+    </script>
+</body>
+</html>
